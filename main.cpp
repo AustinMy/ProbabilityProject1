@@ -1,10 +1,11 @@
 #include <cmath>
 #include <iostream>
+#include <vector>
 using namespace std;
+
 
 #define INC 457
 #define MUL 1001
-#define SEED 1000
 #define MOD 1000
 
 #define meanX 12
@@ -12,58 +13,35 @@ using namespace std;
 #define busy 3
 #define unavailable 25
 #define end 1
-#define isBusy .2d
-#define isUnavailable .3d
+#define isBusy .2
+#define isUnavailable .3
 #define redial 4   // number of times a customer is dialed in total
 
-static int randomInt(int x){
-  if (x == 0)
-    return SEED;
+int xprev = 1000;
+//The random generator was not x-1 but the subscript -1 therefore it makes sense that we start
+//from the seed at i =0 and each time we ask for a number i is incremented
+double random(){
+  xprev = (MUL*xprev+INC)%MOD;
+  return (double)xprev/MOD;
+}
 
-  return (MUL*randomInt(x-1)+INC)%MOD;
-}
-static double random(int x){
-  return (double)randomInt(x)/MOD;
-}
 
 class Variable{
   public:
     double value;
     double probability;
-    public Variable();
-}
+    Variable();
+};
 
-class DiscreteRandomVar{
-  public:
-    double probabilityToVariable(double prob);
-    DiscreteRandomVar();
-    void addVariable(Variable var);
-  
-  private:
-    Vector<Variable> pmf;
-}
-DiscreteRandomVar(){
-  pmf;
-}
-
-//Note this does not order correctly so its up to us to give it lower to higher probabilities
-//originall   
-void addVariable(Variable var){
-  pmf.push_back(var);
-}
-
-double probabilityToVariable(double prob){
-  int i = 0;
-  while(pmf[i].probability < prob){
-    i++;
-  }
-  return pmf[i-1];
-}
 
 // F is expCDF with E[X] = 12
 // event X is talk time
-double probabilityToVariableX(double prob){
-  return -meanX*log(1-p);
+double inverseCDF(double prob){
+  double res = -meanX*log(1-prob);
+  if(res > 25){
+    return inverseCDF(random());
+  }
+  return res;
 }
 
 int main(){
@@ -76,23 +54,27 @@ int main(){
    
   for (int i = 0; i < 150; i++){
     for (int j = 0; j < 4; j++){
-      p = random(4*i + j + 10);   // to prevent patterns
+      p = random();   // to prevent patterns
+      cout << p << " : " << i << " : " << j << endl;
       w[i] += dial + end;         // constant for all calls
 
       if (p >= isBusy+isUnavailable){ // call is answered
-	w[i] += 
-	break;                    // no need to loop anymore
+	      w[i] += inverseCDF(random());  
+	      break;                    // no need to loop anymore
       }
-
-      if (p < isBusy)             // is busy
-	w[i] += busy;
-      else                        // is unavaiable
-	w[i] += unavailable;      
+      cout<< p<< endl;
+      if (p < isBusy){             // is busy
+        cout<< busy <<endl;
+	      w[i] += busy;
+      }
+      else{                        // is unavaiable
+        cout<< unavailable << endl;
+	      w[i] += unavailable;      
+      }
     }
   }
-    
-    
-    
-  
+  for(int i = 0; i< 150; i++){
+    cout<< w[i] <<endl;
+  }
   return 0;
 }
