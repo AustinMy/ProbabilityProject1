@@ -19,6 +19,7 @@ using namespace std;
 #define redial 4   // number of times a customer is dialed in total
 
 double w[150];     // convenient for static methods
+double probs[500];
 int xprev = 1000;
 //The random generator was not x-1 but the subscript -1 therefore it makes sense that we start
 //from the seed at i =0 and each time we ask for a number i is incremented
@@ -69,37 +70,43 @@ double inverseCDF(double prob){
 
 int main(){ 
                  // initializing time array
-  for (int i = 0; i < 150; i++)
+  for (int i = 0; i < 150; i++){
     w[i]=0;
+  }
+  for (int i =0; i<500; i++){
+    probs[i]=randomP();
+  }
   
+  int busy_count = 0;
+  int unavailable_count = 0;
+  int available_count =0;  
   double p = 0;                   // used for probabilities
-  
+  int next_prob =0; 
   for (int i = 0; i < 150; i++){
     for (int j = 0; j < 4; j++){
-      p = randomP();   // to prevent patterns
-      cout << p << " : " << i << " : " << j << endl;
+      p = probs[next_prob++];   // to prevent patterns;
       w[i] += dial + end;         // constant for all calls
 
       if (p >= isBusy+isUnavailable){ // call is answered
 	      w[i] += inverseCDF(randomP());  
+        available_count++;
 	      break;                    // no need to loop anymore
       }
-      cout<< p<< endl;
       if (p < isBusy){             // is busy
-        cout<< busy <<endl;
 	      w[i] += busy;
+        busy_count++;
       }
       else{                        // is unavaiable
-        cout<< unavailable << endl;
 	      w[i] += unavailable;      
+        unavailable_count++;
       }
     }
   }
-
   sort(w, w+150);
-  for(int i = 0; i< 150; i++){
-    cout<< w[i] <<endl;
-  }
+  cout<< "Busy: "<< busy_count <<endl;
+  cout << "Unavailable: " << unavailable_count << endl;
+  cout << "Available: " << available_count << endl;
+
 
   cout << "Mean: " << mean() << endl;
   cout << "Median: " << median() << endl;
