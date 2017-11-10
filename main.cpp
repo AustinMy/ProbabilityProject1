@@ -54,6 +54,14 @@ double cutOff(int range){         // Returns P[W <= range]
   return x/150;
 }
 
+double firstQuartile(){
+  return w[37];
+}
+
+double thirdQuartile(){
+  return w[112];
+}
+
 double median(){
   return (w[74]+w[75])/2;
 }
@@ -110,14 +118,16 @@ int main(){
 
   cout << "Mean: " << mean() << endl;
   cout << "Median: " << median() << endl;
+  cout << "First Quartile: " << firstQuartile() << endl;
+  cout << "Third Quartile: " << thirdQuartile() << endl;
   cout << "Cutoffs: " << endl;
   cout << "<= 15 " << cutOff(15) << endl;
   cout << "<= 20 " << cutOff(20) << endl;
   cout << "<= 30 " << cutOff(30) << endl;
   cout << "> 40 " << 1-cutOff(40) << endl;
-  cout << "> 45 " << 1-cutOff(45) << endl;
   cout << "> 50 " << 1-cutOff(50) << endl;
-  cout << "> 55 " << 1-cutOff(55) << endl;
+  cout << "> 60 " << 1-cutOff(60) << endl;
+  cout << "> 65 " << 1-cutOff(65) << endl;
 
   
   return 0;
